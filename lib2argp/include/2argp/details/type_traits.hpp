@@ -23,16 +23,39 @@
 
 namespace lib2argp::details
 {
-    template <typename _T>
+    template <typename>
     struct is_character
-        : public std::bool_constant<
-              std::is_same_v<_T, signed char> ||
-              std::is_same_v<_T, unsigned char> ||
-              std::is_same_v<_T, char> ||
-              std::is_same_v<_T, wchar_t> ||
-              std::is_same_v<_T, char16_t> ||
-              std::is_same_v<_T, char32_t>
-          >
+        : public std::false_type
+    {};
+
+    template <>
+    struct is_character<signed char>
+        : public std::true_type
+    {};
+
+    template <>
+    struct is_character<unsigned char>
+        : public std::true_type
+    {};
+
+    template <>
+    struct is_character<char>
+        : public std::true_type
+    {};
+
+    template <>
+    struct is_character<wchar_t>
+        : public std::true_type
+    {};
+
+    template <>
+    struct is_character<char16_t>
+        : public std::true_type
+    {};
+
+    template <>
+    struct is_character<char32_t>
+        : public std::true_type
     {};
 
     template <typename _T>
