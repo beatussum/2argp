@@ -22,13 +22,15 @@ set(LIB2ARGP_HPP
     include/2argp/cli_parser.hpp
     include/2argp/exceptions.hpp
     include/2argp/type_traits.hpp
+    include/2argp/argument/IArgument.hpp
     include/2argp/details/details.hpp
     include/2argp/details/type_traits.hpp)
 set(LIB2ARGP_IPP
     include/2argp/details/ipp/cli_parser.ipp
     include/2argp/details/ipp/details.ipp)
 set(LIB2ARGP_CPP
-    cli_parser.cpp)
+    cli_parser.cpp
+    IArgument.cpp)
 
 add_library("${PROJECT_NAME}" SHARED "${LIB2ARGP_HPP}" "${LIB2ARGP_IPP}" "${LIB2ARGP_CPP}")
 
