@@ -75,6 +75,13 @@ namespace lib2argp
         char operator()(const std::string&) const;
     };
 
+    template <>
+    class cli_parser<std::string>
+    {
+    public:
+        std::string operator()(const std::string& __s) const { return __s; }
+    };
+
     template <class _T0, class _T1>
     class cli_parser<std::pair<_T0, _T1>>
     {
