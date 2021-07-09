@@ -21,6 +21,10 @@
 
 namespace lib2argp
 {
+    /*********************/
+    /* FUNDAMENTAL TYPES */
+    /*********************/
+
     template <typename _T>
     _T cli_parser<_T, std::enable_if_t<details::is_strict_integral_v<_T>>>::operator()(const std::string& __s) const
     {
@@ -66,6 +70,10 @@ namespace lib2argp
 
         return ret;
     }
+
+    /***************/
+    /* OTHER TYPES */
+    /***************/
 
     template <class _T0, class _T1>
     std::pair<_T0, _T1> cli_parser<std::pair<_T0, _T1>>::operator()(const std::string& __s) const

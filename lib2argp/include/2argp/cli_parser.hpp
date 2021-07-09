@@ -30,11 +30,15 @@ namespace lib2argp
     template <class, typename = void>
     class cli_parser;
 
+    /*********************/
+    /* FUNDAMENTAL TYPES */
+    /*********************/
+
     template <typename _T>
     class cli_parser<_T, std::enable_if_t<details::is_strict_integral_v<_T>>>
     {
     public:
-        cli_parser(int __base = 10) noexcept
+        cli_parser(const int __base = 10) noexcept
             : m_base_(__base)
         {}
 
@@ -82,6 +86,10 @@ namespace lib2argp
         std::string operator()(const std::string& __s) const { return __s; }
     };
 
+    /***************/
+    /* OTHER TYPES */
+    /***************/
+
     template <class _T0, class _T1>
     class cli_parser<std::pair<_T0, _T1>>
     {
@@ -89,7 +97,7 @@ namespace lib2argp
         using first_value_parser_type = cli_parser<_T0>;
         using second_value_parser_type = cli_parser<_T1>;
     public:
-        cli_parser( char __separator = '='
+        cli_parser( const char __separator = '='
                   , first_value_parser_type __first = {}
                   , second_value_parser_type __second = {})
             : m_sep_(__separator)
@@ -110,7 +118,7 @@ namespace lib2argp
     public:
         using value_parser_type = cli_parser<typename _T::value_type>;
     public:
-        cli_parser(char __separator = ',', value_parser_type __p = {})
+        cli_parser(const char __separator = ',', value_parser_type __p = {})
             : m_sep_(__separator)
             , m_val_parser_(std::move(__p))
         {};
