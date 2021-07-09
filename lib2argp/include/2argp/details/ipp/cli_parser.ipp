@@ -17,6 +17,7 @@
 
 
 #include "2argp/exceptions.hpp"
+#include "2argp/details/details.hpp"
 
 namespace lib2argp
 {
@@ -61,6 +62,58 @@ namespace lib2argp
 
         if (pos != __s.size()) {
             throw bad_parsing(__s, "the string is not a valid floating point");
+        }
+
+        return ret;
+    }
+
+    template <class _T0, class _T1>
+    std::pair<_T0, _T1> cli_parser<std::pair<_T0, _T1>>::operator()(const std::string& __s) const
+    {
+        using exceptions::bad_parsing;
+        using details::contains;
+
+        std::pair<_T0, _T1> ret;
+
+        const auto i = std::find(__s.cbegin(), __s.cend(), m_sep_);
+
+        if (i != __s.cend()) {
+            if (contains(i + 1, __s.cend(), *i)) {
+                throw bad_parsing(
+                    __s, "the `std::pair` contains more than two elements"
+                );
+            }
+
+            ret = std::make_pair(
+                m_first_val_parser_({__s.cbegin(), i}),
+                m_second_val_parser_({i + 1, __s.cend()})
+            );
+        } else if (__s.size() != 0) {
+            throw bad_parsing(
+                __s, "the `std::pair` has only one element"
+            );
+        }
+
+        return ret;
+    }
+
+    // TODO: find a better implementation
+    template <class _T>
+    _T cli_parser<_T, std::enable_if_t<is_dynamic_sized_container_v<_T>>>::operator()(const std::string& __s) const
+    {
+        _T ret;
+
+        auto i = std::find(__s.cbegin(), __s.cend(), m_sep_);
+        char sep = (i != __s.cend()) ? *i : char();
+
+        for (auto first = __s.cbegin(); ; ) {
+            ret.insert(m_val_parser_({first, i}));
+
+            if (i == __s.cend()) {
+                break;
+            } else {
+                i = std::find((first = i + 1), __s.cend(), sep);
+            }
         }
 
         return ret;

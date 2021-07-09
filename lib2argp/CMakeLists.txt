@@ -21,6 +21,7 @@ project("lib${CMAKE_PROJECT_NAME}"
 set(LIB2ARGP_HPP
     include/2argp/cli_parser.hpp
     include/2argp/exceptions.hpp
+    include/2argp/type_traits.hpp
     include/2argp/details/details.hpp
     include/2argp/details/type_traits.hpp)
 set(LIB2ARGP_IPP

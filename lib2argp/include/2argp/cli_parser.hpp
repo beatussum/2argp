@@ -19,11 +19,12 @@
 #ifndef LIB2ARGP_CLI_PARSER_HPP
 #define LIB2ARGP_CLI_PARSER_HPP
 
+#include "2argp/type_traits.hpp"
 #include "2argp/details/type_traits.hpp"
 
 #include <string>
-#include <vector>
 
+// TODO: try to use `std::string_view`
 namespace lib2argp
 {
     template <class, typename = void>
@@ -49,31 +50,68 @@ namespace lib2argp
         _T operator()(const std::string&) const;
     };
 
-    // TODO: try to use a static-sized container for keywords.
     template <>
     class cli_parser<bool>
     {
     public:
-        using keywords_t = std::vector<std::string>;
-    public:
-        cli_parser( keywords_t __no = {"no", "off"}
-                  , keywords_t __yes = {"yes", "on"})
+        cli_parser( std::string __no = "no"
+                  , std::string __yes = "yes")
             : m_no_(std::move(__no))
             , m_yes_(std::move(__yes))
         {}
 
         bool operator()(const std::string&) const;
     private:
-        keywords_t m_no_;
-        keywords_t m_yes_;
+        std::string m_no_;
+        std::string m_yes_;
     };
 
     // TODO: see what to do for other character types
+    // TODO: see what to do for `std::*int8_t`
     template <>
     class cli_parser<char>
     {
     public:
         char operator()(const std::string&) const;
+    };
+
+    template <class _T0, class _T1>
+    class cli_parser<std::pair<_T0, _T1>>
+    {
+    public:
+        using first_value_parser_type = cli_parser<_T0>;
+        using second_value_parser_type = cli_parser<_T1>;
+    public:
+        cli_parser( char __separator = '='
+                  , first_value_parser_type __first = {}
+                  , second_value_parser_type __second = {})
+            : m_sep_(__separator)
+            , m_first_val_parser_(std::move(__first))
+            , m_second_val_parser_(std::move(__second))
+        {}
+
+        std::pair<_T0, _T1> operator()(const std::string&) const;
+    private:
+        char m_sep_;
+        first_value_parser_type m_first_val_parser_;
+        second_value_parser_type m_second_val_parser_;
+    };
+
+    template <class _T>
+    class cli_parser<_T, std::enable_if_t<is_dynamic_sized_container_v<_T>>>
+    {
+    public:
+        using value_parser_type = cli_parser<typename _T::value_type>;
+    public:
+        cli_parser(char __separator = ',', value_parser_type __p = {})
+            : m_sep_(__separator)
+            , m_val_parser_(std::move(__p))
+        {};
+
+        _T operator()(const std::string&) const;
+    private:
+        char m_sep_;
+        value_parser_type m_val_parser_;
     };
 }
 

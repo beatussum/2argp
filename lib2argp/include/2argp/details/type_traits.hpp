@@ -59,13 +59,10 @@ namespace lib2argp::details
     {};
 
     template <typename _T>
-    constexpr bool is_character_v = is_character<_T>::value;
-
-    template <typename _T>
     struct is_strict_integral
         : public std::bool_constant<
               std::is_integral_v<_T> &&
-              !is_character_v<_T>
+              !is_character<_T>::value
           >
     {};
 

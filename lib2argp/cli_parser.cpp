@@ -24,12 +24,11 @@ namespace lib2argp
 {
     bool cli_parser<bool>::operator()(const std::string& __s) const
     {
-        using details::contains;
         using exceptions::bad_parsing;
 
-        if (contains(m_no_.cbegin(), m_no_.cend(), __s)) {
+        if (__s == m_yes_) {
             return true;
-        } else if (contains(m_yes_.cbegin(), m_yes_.cend(), __s)) {
+        } else if (__s == m_no_) {
             return false;
         } else {
             throw bad_parsing(__s, "the string is not a valid boolean");
@@ -40,7 +39,7 @@ namespace lib2argp
     {
         using exceptions::bad_parsing;
 
-        if (__s.size() != 1) {
+        if (__s.size() > 1) {
             throw bad_parsing(__s, "the string is not one character");
         }
 
